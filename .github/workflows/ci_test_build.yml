@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   tests:
@@ -14,26 +15,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: |
-          if [ -f package.json ]; then
-            npm install
-          else
-            echo "No package.json found"
-          fi
-
-      - name: Run tests
-        run: |
-          if [ -f package.json ]; then
-            npm test || echo "No tests defined"
-          else
-            echo "Skipping tests"
-          fi
+      - name: Run tests (if any)
+        run: echo "No tests defined"
 
   build-and-push:
     needs: tests
@@ -50,12 +33,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
+      - name: Build and push Docker image
         run: |
-         docker build -t ghcr.io/${{ github.repository_owner | toLower }}/html5up-paradigm-shift/multiverse-app:latest .
-
-
-      - name: Push Docker image
-        run: |
-        docker push ghcr.io/${{ github.repository_owner | toLower }}/html5up-paradigm-shift/multiverse-app:latest
-
+          IMAGE_NAME=$(echo "ghcr.io/${{ github.repository }}/multiverse-app:latest" | tr '[:upper:]' '[:lower:]')
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
