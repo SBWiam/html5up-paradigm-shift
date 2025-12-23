@@ -52,8 +52,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/multiverse-app:latest .
+         docker build -t ghcr.io/${{ github.repository_owner | toLower }}/html5up-paradigm-shift/multiverse-app:latest .
+
 
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository }}/multiverse-app:latest
+        docker push ghcr.io/${{ github.repository_owner | toLower }}/html5up-paradigm-shift/multiverse-app:latest
+
