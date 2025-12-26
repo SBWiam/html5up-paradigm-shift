@@ -1,5 +1,4 @@
 name: CI Test & Build
-
 on:
   push:
     branches: [ main ]
@@ -7,32 +6,33 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   tests:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Run tests (if any)
         run: echo "No tests defined"
-
+        
   build-and-push:
     needs: tests
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+        
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+          
       - name: Build and push Docker image
         run: |
           IMAGE_NAME=$(echo "ghcr.io/${{ github.repository }}/multiverse-app:latest" | tr '[:upper:]' '[:lower:]')
